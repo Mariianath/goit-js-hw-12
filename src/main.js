@@ -2,6 +2,7 @@ import { fetchImages } from './js/pixabay-api';
 import { renderGallery, clearGallery } from './js/render-functions';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import axios from 'axios';
 
 const form = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
