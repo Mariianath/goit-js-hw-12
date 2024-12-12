@@ -3,16 +3,15 @@ import { fetchImages } from './js/pixabay-api.js';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-// Ініціалізація глобальних змінних
 const form = document.querySelector('#search-form');
 const input = document.querySelector('input[name="searchQuery"]');
 const gallery = document.querySelector('.gallery');
-const loader = document.querySelector('.loader'); // Елемент для індикатора завантаження
+const loader = document.querySelector('.loader'); 
 
 let currentPage = 1;
-let currentQuery = ''; // Відстеження останнього запиту
+let currentQuery = ''; 
 
-// Івенти
+
 form.addEventListener('submit', onSearch);
 
 async function onSearch(event) {
@@ -25,13 +24,13 @@ async function onSearch(event) {
   }
 
   if (query !== currentQuery) {
-    resetGallery(); // Скидаємо галерею лише при новому запиті
-    currentPage = 1; // Скидаємо сторінку
+    resetGallery(); 
+    currentPage = 1; 
   }
   currentQuery = query;
 
   try {
-    toggleLoader(true); // Показуємо завантажувач
+    toggleLoader(true); 
 
     const { hits, totalHits } = await fetchImages(query, currentPage);
     if (hits.length === 0) {
@@ -39,12 +38,16 @@ async function onSearch(event) {
       return;
     }
 
-    showSuccess(`Found ${totalHits} images!`);
+    if (currentPage === 1) {
+      showSuccess(`Found ${totalHits} images!`);
+    }
+
     renderGallery(hits);
+    currentPage += 1; 
   } catch (error) {
     showError(error.message || 'Something went wrong. Please try again later.');
   } finally {
-    toggleLoader(false); // Ховаємо завантажувач після виконання
+    toggleLoader(false);
   }
 }
 
