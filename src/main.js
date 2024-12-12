@@ -1,72 +1,81 @@
-import { fetchImages } from './js/pixabay-api';
-import { renderGallery, clearGallery } from './js/render-functions';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-import axios from 'axios';
+import { renderGallery } from './js/render-functions.js';
+import { fetchImages } from './js/pixabay-api.js';
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
-const form = document.querySelector('.search-form');
+// Ініціалізація глобальних змінних
+const form = document.querySelector('#search-form');
+const input = document.querySelector('input[name="searchQuery"]');
 const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.load-more');
+const loader = document.querySelector('.loader'); // Елемент для індикатора завантаження
 
-let query = '';
-let page = 1;
-let perPage = 15;
-let lightbox;
+let currentPage = 1;
+let currentQuery = ''; // Відстеження останнього запиту
 
+// Івенти
 form.addEventListener('submit', onSearch);
-loadMoreBtn.addEventListener('click', onLoadMore);
 
-async function onSearch(e) {
-  e.preventDefault();
-  query = e.currentTarget.elements.searchQuery.value.trim();
-  if (!query) return;
+async function onSearch(event) {
+  event.preventDefault();
 
-  page = 1;
-  clearGallery(gallery);
-  loadMoreBtn.classList.add('is-hidden');
+  const query = input.value.trim();
+  if (!query) {
+    showWarning('Please enter a search query.');
+    return;
+  }
+
+  if (query !== currentQuery) {
+    resetGallery(); // Скидаємо галерею лише при новому запиті
+    currentPage = 1; // Скидаємо сторінку
+  }
+  currentQuery = query;
 
   try {
-    const data = await fetchImages(query, page, perPage);
-    if (!data.hits.length) {
-      alert('No images found. Please try again.');
+    toggleLoader(true); // Показуємо завантажувач
+
+    const { hits, totalHits } = await fetchImages(query, currentPage);
+    if (hits.length === 0) {
+      showWarning('No images found for your query. Try again!');
       return;
     }
 
-    gallery.innerHTML = renderGallery(data.hits);
-    lightbox = new SimpleLightbox('.gallery a').refresh();
-
-    if (data.totalHits > perPage) {
-      loadMoreBtn.classList.remove('is-hidden');
-    }
+    showSuccess(`Found ${totalHits} images!`);
+    renderGallery(hits);
   } catch (error) {
-    console.error(error);
+    showError(error.message || 'Something went wrong. Please try again later.');
+  } finally {
+    toggleLoader(false); // Ховаємо завантажувач після виконання
   }
 }
 
-async function onLoadMore() {
-  page += 1;
-
-  try {
-    const data = await fetchImages(query, page, perPage);
-
-    gallery.insertAdjacentHTML('beforeend', renderGallery(data.hits));
-    lightbox.refresh();
-
-    if (page * perPage >= data.totalHits) {
-      loadMoreBtn.classList.add('is-hidden');
-      alert("We're sorry, but you've reached the end of search results.");
-    }
-
-    scrollPage();
-  } catch (error) {
-    console.error(error);
-  }
+function resetGallery() {
+  gallery.innerHTML = '';
 }
 
-function scrollPage() {
-  const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
+function toggleLoader(show) {
+  loader.style.display = show ? 'block' : 'none';
+}
+
+function showWarning(message) {
+  iziToast.warning({
+    title: 'Warning',
+    message,
+    position: 'topRight',
+  });
+}
+
+function showSuccess(message) {
+  iziToast.success({
+    title: 'Success',
+    message,
+    position: 'topRight',
+  });
+}
+
+function showError(message) {
+  iziToast.error({
+    title: 'Error',
+    message,
+    position: 'topRight',
   });
 }
