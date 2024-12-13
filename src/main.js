@@ -3,21 +3,29 @@ import { fetchImages } from './js/pixabay-api.js';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
+// DOM Elements
 const form = document.querySelector('#search-form');
 const input = document.querySelector('input[name="searchQuery"]');
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader'); 
 
+// Ensure all required elements are available
+if (!form || !input || !gallery || !loader) {
+  console.error('One or more DOM elements are missing. Check your HTML structure.');
+}
+
 let currentPage = 1;
 let currentQuery = ''; 
 
-
-form.addEventListener('submit', onSearch);
+// Add event listener if form exists
+if (form) {
+  form.addEventListener('submit', onSearch);
+}
 
 async function onSearch(event) {
   event.preventDefault();
 
-  const query = input.value.trim();
+  const query = input?.value.trim();
   if (!query) {
     showWarning('Please enter a search query.');
     return;
@@ -52,11 +60,15 @@ async function onSearch(event) {
 }
 
 function resetGallery() {
-  gallery.innerHTML = '';
+  if (gallery) {
+    gallery.innerHTML = '';
+  }
 }
 
 function toggleLoader(show) {
-  loader.style.display = show ? 'block' : 'none';
+  if (loader) {
+    loader.style.display = show ? 'block' : 'none';
+  }
 }
 
 function showWarning(message) {
