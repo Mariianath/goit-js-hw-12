@@ -3,24 +3,15 @@ import { fetchImages } from './js/pixabay-api.js';
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-// DOM Elements
-const form = document.querySelector('#search-form');
+const form = document.querySelector('.search-form');
 const input = document.querySelector('input[name="searchQuery"]');
 const gallery = document.querySelector('.gallery');
-const loader = document.querySelector('.loader'); 
-
-// Ensure all required elements are available
-if (!form || !input || !gallery || !loader) {
-  console.error('One or more DOM elements are missing. Check your HTML structure.');
-}
+const loader = document.querySelector('.loader');
 
 let currentPage = 1;
-let currentQuery = ''; 
+let currentQuery = '';
 
-// Add event listener if form exists
-if (form) {
-  form.addEventListener('submit', onSearch);
-}
+form?.addEventListener('submit', onSearch);
 
 async function onSearch(event) {
   event.preventDefault();
@@ -32,15 +23,15 @@ async function onSearch(event) {
   }
 
   if (query !== currentQuery) {
-    resetGallery(); 
-    currentPage = 1; 
+    resetGallery();
+    currentPage = 1;
   }
   currentQuery = query;
 
   try {
-    toggleLoader(true); 
-
+    toggleLoader(true);
     const { hits, totalHits } = await fetchImages(query, currentPage);
+
     if (hits.length === 0) {
       showWarning('No images found for your query. Try again!');
       return;
@@ -51,7 +42,7 @@ async function onSearch(event) {
     }
 
     renderGallery(hits);
-    currentPage += 1; 
+    currentPage += 1;
   } catch (error) {
     showError(error.message || 'Something went wrong. Please try again later.');
   } finally {
@@ -60,15 +51,11 @@ async function onSearch(event) {
 }
 
 function resetGallery() {
-  if (gallery) {
-    gallery.innerHTML = '';
-  }
+  gallery.innerHTML = '';
 }
 
 function toggleLoader(show) {
-  if (loader) {
-    loader.style.display = show ? 'block' : 'none';
-  }
+  loader.style.display = show ? 'block' : 'none';
 }
 
 function showWarning(message) {
