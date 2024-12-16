@@ -4,35 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Image Search</title>
-  <style>
-    /* CSS для лоадера */
-    .loader {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
-      display: none; /* Сховати за замовчуванням */
-    }
-
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 6px solid #ccc;
-      border-top-color: #3498db;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
+  
   <script type="module" crossorigin src="/goit-js-hw-12/index.js"></script>
   <link rel="modulepreload" crossorigin href="/goit-js-hw-12/assets/vendor-Cbhu4xvy.js">
   <link rel="stylesheet" crossorigin href="/goit-js-hw-12/assets/vendor-DnveWo0P.css">
@@ -51,7 +23,6 @@
   <div class="gallery"></div>
   <button class="load-more is-hidden">Load more</button>
 
-  <!-- Додано HTML для лоадера -->
   <div class="loader">
     <div class="spinner"></div>
   </div>
